@@ -77,7 +77,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
 /* USER CODE BEGIN Application */
 
 /* -----------------------------------------------------------------------
-   Blink task – toggles the on‑board LED (LD2) every 500 ms.
+   Blink task – toggles the on‑board LED (LD2) every xxx ms.
    ----------------------------------------------------------------------- */
 void StartBlinkTask(void const * argument)
 {
