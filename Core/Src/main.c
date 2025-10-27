@@ -1,3 +1,5 @@
+/* ============================= main.c ============================= */
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -42,7 +44,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
-osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
 // <<<<< [NOTE] – No additional private variables
 /* USER CODE END PV */
@@ -51,14 +52,15 @@ osThreadId defaultTaskHandle;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-void StartDefaultTask(void const * argument);
 /* USER CODE BEGIN PFP */
 // <<<<< [NOTE] – No extra prototypes
+/* Forward declaration to call the RTOS init that lives in freertos.c */
+void MX_FREERTOS_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-// <<<<< [NOTE] – Place for early‑init code if you ever need it
+// <<<<< [NOTE] – Place for early-init code if you ever need it
 /* USER CODE END 0 */
 
 /**
@@ -84,7 +86,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  // <<<<< [NOTE] – System clock configured for 72 MHz (HSE + PLL×9)
+  // <<<<< [NOTE] – System clock configured for 72 MHz (HSE + PLL×9)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -92,11 +94,11 @@ int main(void)
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
-  // <<<<< [NOTE] – No peripheral‑specific init beyond GPIO/UART
+  // <<<<< [NOTE] – No peripheral-specific init beyond GPIO/UART
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
-  // <<<<< [NOTE] – No mutexes needed for the single‑thread blink
+  // <<<<< [NOTE] – No mutexes needed for the single-thread blink
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -111,14 +113,8 @@ int main(void)
   // <<<<< [NOTE] – No queues needed
   /* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  // <<<<< [NOTE] – Only the defaultTask runs; you could add more later
-  /* USER CODE END RTOS_THREADS */
+  /* Create the thread(s) in freertos.c */
+  MX_FREERTOS_Init();    // <<<<< [RTOS] – All user tasks are created here
 
   /* Start scheduler */
   osKernelStart();
@@ -182,7 +178,7 @@ void SystemClock_Config(void)
 static void MX_USART2_UART_Init(void)
 {
   /* USER CODE BEGIN USART2_Init 0 */
-  // <<<<< [NOTE] – No pre‑init actions required
+  // <<<<< [NOTE] – No pre-init actions required
   /* USER CODE END USART2_Init 0 */
 
   /* USER CODE BEGIN USART2_Init 1 */
@@ -249,27 +245,6 @@ static void MX_GPIO_Init(void)
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   // <<<<< [NOTE] – No additional pins used in this demo
   /* USER CODE END MX_GPIO_Init_2 */
-}
-
-/* USER CODE BEGIN 4 */
-/* USER CODE END 4 */
-
-/* USER CODE BEGIN Header_StartDefaultTask */
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
-{
-  /* USER CODE BEGIN 5 */
-  for (;;)
-  {
-    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);   // <<<--- [BLINK] – toggle on‑board LED
-    osDelay(BLINK_PERIOD_MS);                     // <<<--- [DELAY] – xxx ms pause
-  }
-  /* USER CODE END 5 */
 }
 
 /**
