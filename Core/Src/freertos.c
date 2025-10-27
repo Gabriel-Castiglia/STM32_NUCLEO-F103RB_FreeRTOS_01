@@ -1,3 +1,5 @@
+/* =========================== freertos.c =========================== */
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -25,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "config.h"     // <<<<< [NOTE] – For blinking speed
-#include "cmsis_os.h"   // <<<--- [NOTE] – Required for CMSIS‑RTOS v1 API
+#include "cmsis_os.h"   // <<<--- [NOTE] – Required for CMSIS-RTOS v1 API
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +53,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 // <<<--- [NOTE] – Prototypes for our blink task are below
+void StartBlinkTask(void const * argument);
 /* USER CODE END FunctionPrototypes */
 
 /* GetIdleTaskMemory prototype (linked to static allocation support) */
@@ -60,7 +63,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
 
 /* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
 static StaticTask_t  xIdleTaskTCBBuffer;
-static StackType_t  xIdleStack[configMINIMAL_STACK_SIZE];
+static StackType_t   xIdleStack[configMINIMAL_STACK_SIZE];
 
 void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
                                     StackType_t **ppxIdleStackBuffer,
@@ -77,14 +80,14 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
 /* USER CODE BEGIN Application */
 
 /* -----------------------------------------------------------------------
-   Blink task – toggles the on‑board LED (LD2) every xxx ms.
+   Blink task – toggles the on-board LED (LD2) every 500 ms.
    ----------------------------------------------------------------------- */
 void StartBlinkTask(void const * argument)
 {
   for (;;)
   {
     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);   // <<<--- [BLINK] – toggle LED
-    osDelay(BLINK_PERIOD_MS);                     // <<<--- [DELAY] – xxx ms pause
+    osDelay(BLINK_PERIOD_MS);                     // <<<--- [DELAY] – xxx ms pause
   }
 }
 
@@ -97,5 +100,4 @@ void MX_FREERTOS_Init(void)
   osThreadDef(blinkTask, StartBlinkTask, osPriorityNormal, 0, 128);
   osThreadCreate(osThread(blinkTask), NULL);      // <<<--- [TASK] – start blinkTask
 }
-
 /* USER CODE END Application */
